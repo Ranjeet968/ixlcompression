@@ -1,5 +1,5 @@
 {
-    "name": "ranjeet/ixlcompression",
+    "name": "ranjeet968/ixlcompression",
     "description": "A Laravel package for compressing PDFs and images using Ghostscript, Imagick, Snappy, or Dompdf.",
     "type": "library",
     "license": "MIT",
