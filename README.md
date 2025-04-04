@@ -29,11 +29,11 @@ composer update ranjeet968/ixlcompression
 doc, xls, ppt, csv (No compression applied)
 
 🔧 Usage
+
 1️⃣ Basic File Compression
 use Ranjeet\IxlCompression\FileCompressor;
 
-$compressor = new FileCompressor();
-$compressedFile = $compressor->compressFile($uploadedFile);
+$compressedFile = FileCompressor::compress($uploadedFile);
 Here, $uploadedFile should be an instance of Illuminate\Http\UploadedFile or a valid file path.
 
 
