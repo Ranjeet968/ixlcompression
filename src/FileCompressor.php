@@ -11,6 +11,11 @@ class FileCompressor
     public function compressFile($file)
     {
 
+        // Get the current PHP version
+        $phpVersion = phpversion();
+        $phpMajorMinor = implode('.', array_slice(explode('.', $phpVersion), 0, 2)); // Extract major.minor version (e.g., "8.3")
+
+
         // Handle Livewire TemporaryUploadedFile dynamically
         if (class_exists('Livewire\TemporaryUploadedFile') && $file instanceof \Livewire\TemporaryUploadedFile) {
             $filePath = $file->getRealPath();
@@ -31,11 +36,12 @@ class FileCompressor
             throw new Exception("Unsupported file type passed to compressFile()");
         }
 
-        // 🔹 Only require Imagick for image files, NOT PDFs
+        // 🔹 Handle image compression
         $imageExtensions = ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp'];
-
-        if (in_array($fileExtension, $imageExtensions) && !class_exists('Imagick')) {
-            throw new \Exception("Imagick is not installed. Please install it using: sudo apt install php-imagick");
+        if (in_array($fileExtension, $imageExtensions)) {
+            if (!class_exists('Imagick')) {
+                throw new \Exception("Imagick is not installed. Please install it using: sudo apt install php{$phpMajorMinor}-imagick -y");
+            }
         }
 
         $inputPath = $file->getPathname();
