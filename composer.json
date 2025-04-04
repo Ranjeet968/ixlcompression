@@ -1,0 +1,39 @@
+{
+    "name": "ranjeet/ixlcompression",
+    "description": "A Laravel package for compressing PDFs and images using Ghostscript, Imagick, Snappy, or Dompdf.",
+    "type": "library",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "Ranjeet\\IxlCompression\\": "src/"
+        }
+    },
+    "require": {
+        "php": ">=8.0",
+        "illuminate/support": "^9.0|^10.0|^11.0"
+    },
+    "suggest": {
+        "barryvdh/laravel-snappy": "For better PDF compression (optional).",
+        "dompdf/dompdf": "Alternative PDF compression method (optional).",
+        "ext-imagick": "For image compression (optional).",
+        "ghostscript": "Required for Ghostscript-based PDF compression."
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^9.0"
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Ranjeet\\IxlCompression\\IxlCompressionServiceProvider"
+            ]
+        }
+    },
+    "minimum-stability": "stable",
+    "prefer-stable": true,
+    "repositories": {
+        "ixlcompression": {
+            "type": "path",
+            "url": "/absolute-path-to-package/ixlcompression"
+        }
+    }
+}
