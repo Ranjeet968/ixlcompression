@@ -9,14 +9,14 @@
         }
     },
     "require": {
-        "php": ">=8.0",
-        "illuminate/support": "^9.0|^10.0|^11.0"
+        "php": ">=8.1",  
+        "illuminate/support": "^9.0|^10.0|^11.0|^12.0"
     },
     "suggest": {
         "barryvdh/laravel-snappy": "For better PDF compression (optional).",
         "dompdf/dompdf": "Alternative PDF compression method (optional).",
-        "ext-imagick": "Required for image compression. Install via `sudo apt install php-imagick`",
-        "ghostscript": "Required for PDF compression. Install via `sudo apt install ghostscript`"
+        "ext-imagick": "Required for image compression. Install via `sudo apt install php-imagick`.",
+        "ghostscript": "Required for PDF compression. Install via `sudo apt install ghostscript`."
     },
     "require-dev": {
         "phpunit/phpunit": "^9.0"
@@ -29,11 +29,5 @@
         }
     },
     "minimum-stability": "stable",
-    "prefer-stable": true,
-    "repositories": {
-        "ixlcompression": {
-            "type": "path",
-            "url": "/absolute-path-to-package/ixlcompression"
-        }
-    }
+    "prefer-stable": true
 }
