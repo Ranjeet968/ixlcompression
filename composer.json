@@ -1,6 +1,6 @@
 {
     "name": "ranjeet968/ixlcompression",
-    "description": "A Laravel package for compressing images (JPG, PNG, GIF, WebP) and PDFs (Snappy, Dompdf) using Imagick and Ghostscript.",
+    "description": "A Laravel package for compressing images (JPG, JPEG, PNG, GIF, BMP, WEBP, PSD, TIFF) and PDFs (Snappy, Dompdf, or standard PDF) using Imagick and Ghostscript.",
     "keywords": ["laravel", "compression", "image", "pdf", "imagick", "ghostscript", "snappy", "dompdf"],
     "type": "library",
     "license": "MIT",

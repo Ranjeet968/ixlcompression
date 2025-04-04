@@ -41,7 +41,7 @@ class FileCompressor
         }
 
         // 🔹 Handle image compression
-        $imageExtensions = ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp'];
+        $imageExtensions = ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp', 'psd', 'tiff'];
         if (in_array($fileExtension, $imageExtensions)) {
             if (!class_exists('Imagick')) {
                 throw new \Exception("Imagick is not installed. Please install it using: sudo apt install php{$phpMajorMinor}-imagick -y");
@@ -65,7 +65,7 @@ class FileCompressor
 
     private function handleCompression($inputPath, $outputPath, $fileExtension)
     {
-        // Skip compression for certain file types
+        // Skip compression for certain document types
         if (in_array($fileExtension, ['doc', 'docx', 'xls', 'xlsx', 'csv', 'ppt', 'pptx'])) {
             copy($inputPath, $outputPath);
             return $outputPath;
@@ -73,7 +73,7 @@ class FileCompressor
 
         if ($fileExtension === 'pdf') {
             return $this->compressPDF($inputPath, $outputPath);
-        } elseif (in_array($fileExtension, ['jpg', 'jpeg', 'png', 'gif', 'bmp'])) {
+        } elseif (in_array($fileExtension, ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'psd', 'tiff', 'webp'])) {
             return $this->compressImage($inputPath, $outputPath);
         } else {
             throw new Exception("Unsupported file type: $fileExtension");
@@ -155,8 +155,13 @@ class FileCompressor
 
         try {
             $imagick = new \Imagick($inputPath);
-            $imagick->setImageCompressionQuality(60);
-            $imagick->stripImage();
+            // Set compression based on format
+            if ($imagick->getImageFormat() === 'TIFF') {
+                $imagick->setImageCompression(\Imagick::COMPRESSION_LZW); // LZW compression for TIFF
+            } else {
+                $imagick->setImageCompressionQuality(60); // 60% quality for all other formats
+            }
+            $imagick->stripImage(); // Remove metadata to reduce size
             $imagick->writeImage($outputPath);
             $imagick->clear();
             $imagick->destroy();

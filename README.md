@@ -22,7 +22,7 @@ composer update ranjeet968/ixlcompression
 
 📄 PDFs (Compressed using Ghostscript, Snappy, or Dompdf)
 
-🖼️ Images (jpg, jpeg, png, gif, bmp, webp - Compressed using Imagick)
+🖼️ Images (jpg, jpeg, png, gif, bmp, webp, psd, tiff - Compressed using Imagick)
 
 ⛔ Unsupported Files
 
