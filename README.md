@@ -1,19 +1,57 @@
-# IxlCompression
+# 📦 IxlCompression - Laravel File Compression Package
 
-A Laravel package for compressing PDF and image files using Ghostscript and Imagick.
+IxlCompression is a Laravel package that compresses images and PDFs before storing them. It supports **Imagick**, **Ghostscript**, **Snappy**, and **Dompdf** for optimized compression.
 
-## Installation
+---
+
+## 🚀 Installation
+
+Install the package using **Composer**:
 
 ```sh
-composer require ranjeet/ixlcompression
+composer require ranjeet968/ixlcompression
 
-## Requirements
-This package requires the following system dependencies:
-- **Imagick** (for image compression)
-  📌 Install via:
-  sudo apt install php-imagick # Ubuntu/Linux
-brew install imagemagick # macOS
+If you face dependency issues, try updating:
 
-- **Ghostscript** (for PDF compression)
-📌 Install via:
-```
+composer update ranjeet968/ixlcompression
+
+
+📂 Supported File Types
+
+✅ Compressed Files
+
+📄 PDFs (Compressed using Ghostscript, Snappy, or Dompdf)
+
+🖼️ Images (jpg, jpeg, png, gif, bmp, webp - Compressed using Imagick)
+
+⛔ Unsupported Files
+
+doc, xls, ppt, csv (No compression applied)
+
+🔧 Usage
+1️⃣ Basic File Compression
+use Ranjeet\IxlCompression\FileCompressor;
+
+$compressor = new FileCompressor();
+$compressedFile = $compressor->compressFile($uploadedFile);
+Here, $uploadedFile should be an instance of Illuminate\Http\UploadedFile or a valid file path.
+
+
+🛠 Requirements
+PHP 8.0+
+
+Laravel 8+
+
+Imagick (for image compression)
+
+Ghostscript (for PDF compression)
+
+Snappy/Dompdf (optional PDF compression)
+
+To install required dependencies:
+sudo apt install php$(php -r "echo PHP_MAJOR_VERSION.'.'.PHP_MINOR_VERSION;")-imagick -y
+sudo apt install ghostscript -y
+
+
+📜 License
+MIT License © 2024 Ranjeet
