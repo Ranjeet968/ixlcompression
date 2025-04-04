@@ -8,6 +8,12 @@ use Exception;
 
 class FileCompressor
 {
+    public static function compress($file)
+    {
+        $compressor = new self();
+        return $compressor->compressFile($file);
+    }
+
     public function compressFile($file)
     {
         // Get the current PHP version
@@ -49,10 +55,10 @@ class FileCompressor
 
         // 🔹 Return as an UploadedFile instance so users can use it without modifying their code
         return new UploadedFile(
-            $compressedFilePath, 
-            $file->getClientOriginalName(), 
+            $compressedFilePath,
+            $file->getClientOriginalName(),
             mime_content_type($compressedFilePath),
-            null, 
+            null,
             true // Mark as test mode (skips some validation)
         );
     }
