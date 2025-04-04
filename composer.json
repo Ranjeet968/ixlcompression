@@ -15,8 +15,8 @@
     "suggest": {
         "barryvdh/laravel-snappy": "For better PDF compression (optional).",
         "dompdf/dompdf": "Alternative PDF compression method (optional).",
-        "ext-imagick": "For image compression (optional).",
-        "ghostscript": "Required for Ghostscript-based PDF compression."
+        "ext-imagick": "Required for image compression. Install via `sudo apt install php-imagick`",
+        "ghostscript": "Required for PDF compression. Install via `sudo apt install ghostscript`"
     },
     "require-dev": {
         "phpunit/phpunit": "^9.0"

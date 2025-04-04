@@ -10,6 +10,11 @@ class FileCompressor
 {
     public function compressFile($file)
     {
+
+        if (!class_exists('Imagick')) {
+            throw new \Exception("Imagick is not installed. Please install it using: sudo apt install php-imagick");
+        }
+        
         // Handle Livewire TemporaryUploadedFile dynamically
         if (class_exists('Livewire\TemporaryUploadedFile') && $file instanceof \Livewire\TemporaryUploadedFile) {
             $filePath = $file->getRealPath();
