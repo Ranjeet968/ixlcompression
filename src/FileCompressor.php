@@ -14,7 +14,7 @@ class FileCompressor
         if (!class_exists('Imagick')) {
             throw new \Exception("Imagick is not installed. Please install it using: sudo apt install php-imagick");
         }
-        
+
         // Handle Livewire TemporaryUploadedFile dynamically
         if (class_exists('Livewire\TemporaryUploadedFile') && $file instanceof \Livewire\TemporaryUploadedFile) {
             $filePath = $file->getRealPath();
@@ -33,6 +33,13 @@ class FileCompressor
             $fileExtension = strtolower(pathinfo($file->getFilename(), PATHINFO_EXTENSION));
         } else {
             throw new Exception("Unsupported file type passed to compressFile()");
+        }
+
+        // 🔹 Only require Imagick for image files, NOT PDFs
+        $imageExtensions = ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp'];
+
+        if (in_array($fileExtension, $imageExtensions) && !class_exists('Imagick')) {
+            throw new \Exception("Imagick is not installed. Please install it using: sudo apt install php-imagick");
         }
 
         $inputPath = $file->getPathname();
@@ -60,6 +67,12 @@ class FileCompressor
 
     private function compressPDF($inputPath, $outputPath)
     {
+
+        $gsCheck = shell_exec("gs --version 2>&1"); // Check if Ghostscript is available
+        if (!$gsCheck) {
+            throw new \Exception("Ghostscript is not installed. Please install it using: sudo apt install ghostscript");
+        }
+
         // Try Snappy first
         if (class_exists('\Barryvdh\Snappy\PdfWrapper')) {
             return $this->compressWithSnappy($inputPath, $outputPath);
