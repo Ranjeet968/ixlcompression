@@ -10,11 +10,9 @@ class FileCompressor
 {
     public function compressFile($file)
     {
-
         // Get the current PHP version
         $phpVersion = phpversion();
         $phpMajorMinor = implode('.', array_slice(explode('.', $phpVersion), 0, 2)); // Extract major.minor version (e.g., "8.3")
-
 
         // Handle Livewire TemporaryUploadedFile dynamically
         if (class_exists('Livewire\TemporaryUploadedFile') && $file instanceof \Livewire\TemporaryUploadedFile) {
@@ -47,7 +45,16 @@ class FileCompressor
         $inputPath = $file->getPathname();
         $outputPath = storage_path('app/compressed_' . uniqid() . '.' . $fileExtension);
 
-        return $this->handleCompression($inputPath, $outputPath, $fileExtension);
+        $compressedFilePath = $this->handleCompression($inputPath, $outputPath, $fileExtension);
+
+        // 🔹 Return as an UploadedFile instance so users can use it without modifying their code
+        return new UploadedFile(
+            $compressedFilePath, 
+            $file->getClientOriginalName(), 
+            mime_content_type($compressedFilePath),
+            null, 
+            true // Mark as test mode (skips some validation)
+        );
     }
 
     private function handleCompression($inputPath, $outputPath, $fileExtension)
@@ -69,7 +76,6 @@ class FileCompressor
 
     private function compressPDF($inputPath, $outputPath)
     {
-
         $gsCheck = shell_exec("gs --version 2>&1"); // Check if Ghostscript is available
         if (!$gsCheck) {
             throw new \Exception("Ghostscript is not installed. Please install it using: sudo apt install ghostscript");
