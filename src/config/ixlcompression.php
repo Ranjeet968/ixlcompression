@@ -39,7 +39,9 @@ return [
     | - 18 = visually lossless (higher file size)
     | - 23 = good balance (default)
     | - 28 = more compression, smaller size
+    | - 30 = more compression, smaller size
+
     */
-    'video_crf' => 28,
+    'video_crf' => 30,
 
 ];

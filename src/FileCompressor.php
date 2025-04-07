@@ -250,8 +250,4 @@ class FileCompressor
         return $outputPath;
     }
 
-    private function fileMock($path)
-    {
-        return new UploadedFile($path, basename($path), mime_content_type($path), null, true);
-    }
 }
