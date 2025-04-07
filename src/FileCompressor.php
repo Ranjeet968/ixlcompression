@@ -92,12 +92,12 @@ class FileCompressor
         }
 
         // Try Snappy first
-        if (class_exists('\\Barryvdh\\Snappy\\PdfWrapper')) {
+        if (class_exists('\Barryvdh\Snappy\PdfWrapper')) {
             return $this->compressWithSnappy($inputPath, $outputPath);
         }
 
         // Try Dompdf next
-        if (class_exists('\\Dompdf\\Dompdf')) {
+        if (class_exists('\Dompdf\Dompdf')) {
             return $this->compressWithDompdf($inputPath, $outputPath);
         }
 
@@ -197,8 +197,8 @@ class FileCompressor
         $outputPath = preg_replace('/\.\w+$/', ".$extension", $outputPath);
 
         $command = "ffmpeg -i " . escapeshellarg($inputPath) .
-                   " -vcodec libx264 -crf $crf -preset medium " .
-                   escapeshellarg($outputPath) . " -y";
+            " -vcodec libx264 -crf $crf -preset medium " .
+            escapeshellarg($outputPath) . " -y";
 
         exec($command, $output, $returnVar);
 
@@ -208,5 +208,4 @@ class FileCompressor
 
         return $outputPath;
     }
-
 }
