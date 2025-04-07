@@ -77,6 +77,8 @@ class FileCompressor
             return $this->compressPDF($inputPath, $outputPath);
         } elseif (in_array($fileExtension, ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'psd', 'tiff', 'webp'])) {
             return $this->compressImage($inputPath, $outputPath);
+        } elseif (in_array($fileExtension, ['mp4', 'avi', 'mkv', 'mov', 'flv', 'wmv', 'webm'])) {
+            return $this->compressVideo($inputPath, $outputPath);
         } else {
             throw new Exception("Unsupported file type: $fileExtension");
         }
@@ -90,12 +92,12 @@ class FileCompressor
         }
 
         // Try Snappy first
-        if (class_exists('\Barryvdh\Snappy\PdfWrapper')) {
+        if (class_exists('\\Barryvdh\\Snappy\\PdfWrapper')) {
             return $this->compressWithSnappy($inputPath, $outputPath);
         }
 
         // Try Dompdf next
-        if (class_exists('\Dompdf\Dompdf')) {
+        if (class_exists('\\Dompdf\\Dompdf')) {
             return $this->compressWithDompdf($inputPath, $outputPath);
         }
 
@@ -179,4 +181,32 @@ class FileCompressor
 
         return $outputPath;
     }
+
+    private function compressVideo($inputPath, $outputPath)
+    {
+        $phpVersion = phpversion();
+        $phpMajorMinor = implode('.', array_slice(explode('.', $phpVersion), 0, 2));
+
+        if (!shell_exec("command -v ffmpeg")) {
+            throw new \Exception("FFmpeg is not installed. Please install it using: sudo apt install ffmpeg php{$phpMajorMinor}-ffmpeg");
+        }
+
+        $crf = config('ixlcompression.video_crf', 28);
+
+        $extension = pathinfo($inputPath, PATHINFO_EXTENSION);
+        $outputPath = preg_replace('/\.\w+$/', ".$extension", $outputPath);
+
+        $command = "ffmpeg -i " . escapeshellarg($inputPath) .
+                   " -vcodec libx264 -crf $crf -preset medium " .
+                   escapeshellarg($outputPath) . " -y";
+
+        exec($command, $output, $returnVar);
+
+        if ($returnVar !== 0 || !file_exists($outputPath)) {
+            throw new \Exception("Video compression failed using FFmpeg.");
+        }
+
+        return $outputPath;
+    }
+
 }

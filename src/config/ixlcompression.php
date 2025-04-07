@@ -29,4 +29,17 @@ return [
     */
     'pdf_quality' => 'screen',
 
+
+    /*
+    |--------------------------------------------------------------------------
+    | Video Compression CRF (Constant Rate Factor)
+    |--------------------------------------------------------------------------
+    | CRF controls the quality of video compression using FFmpeg.
+    | Range:
+    | - 18 = visually lossless (higher file size)
+    | - 23 = good balance (default)
+    | - 28 = more compression, smaller size
+    */
+    'video_crf' => 28,
+
 ];
