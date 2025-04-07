@@ -4,6 +4,7 @@ namespace Ranjeet\IxlCompression;
 
 use Illuminate\Http\File;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Str;
 use Exception;
 
 class FileCompressor
@@ -49,7 +50,7 @@ class FileCompressor
         }
 
         $inputPath = $file->getPathname();
-        $outputPath = storage_path('app/compressed_' . uniqid() . '.' . $fileExtension);
+        $outputPath = storage_path('app/compressed_' . Str::uuid() . '.' . $fileExtension);
 
         $compressedFilePath = $this->handleCompression($inputPath, $outputPath, $fileExtension);
 
@@ -109,6 +110,7 @@ class FileCompressor
             $snappy->generate($inputPath, $outputPath);
             return $outputPath;
         } catch (Exception $e) {
+            \Log::warning("Snappy compression failed: " . $e->getMessage());
             return $this->compressWithGhostscript($inputPath, $outputPath);
         }
     }
@@ -123,6 +125,7 @@ class FileCompressor
             file_put_contents($outputPath, $dompdf->output());
             return $outputPath;
         } catch (Exception $e) {
+            \Log::warning("Dompdf compression failed: " . $e->getMessage());
             return $this->compressWithGhostscript($inputPath, $outputPath);
         }
     }
@@ -136,6 +139,8 @@ class FileCompressor
 
         $escapedInput = escapeshellarg($inputPath);
         $escapedOutput = escapeshellarg($outputPath);
+
+        // 'ebook' => '-dPDFSETTINGS=/ebook', // good quality + small size
 
         $gsCommand = "gs -sDEVICE=pdfwrite -dCompatibilityLevel=1.4 -dPDFSETTINGS=/screen -dNOPAUSE -dQUIET -dBATCH -sOutputFile=$escapedOutput $escapedInput";
         exec($gsCommand, $output, $returnVar);
