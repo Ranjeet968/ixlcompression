@@ -54,5 +54,9 @@ To install required dependencies:
  b. sudo apt install ghostscript -y
 
 
-📜 License
-MIT License © 2024 Ranjeet
+## License
+
+This package is proprietary and not open source.
+
+You may not copy, reuse, or distribute this code without written permission.
+
