@@ -49,8 +49,9 @@ Ghostscript (for PDF compression)
 Snappy/Dompdf (optional PDF compression)
 
 To install required dependencies:
-sudo apt install php$(php -r "echo PHP_MAJOR_VERSION.'.'.PHP_MINOR_VERSION;")-imagick -y
-sudo apt install ghostscript -y
+ a. example for php 8.2 : sudo apt install php8.2-imagick -y
+
+ b. sudo apt install ghostscript -y
 
 
 📜 License
