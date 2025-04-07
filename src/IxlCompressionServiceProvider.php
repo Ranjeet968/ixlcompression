@@ -14,16 +14,14 @@ class IxlCompressionServiceProvider extends ServiceProvider
         });
 
         // Merge default config
-        $this->mergeConfigFrom(__DIR__ . '/../config/ixlcompression.php', 'ixlcompression');
+        $this->mergeConfigFrom(__DIR__ . '/config/ixlcompression.php', 'ixlcompression');
     }
-    
+
 
     public function boot()
     {
         $this->publishes([
-            __DIR__ . '/../config/ixlcompression.php' => config_path('ixlcompression.php'),
+            __DIR__ . '/config/ixlcompression.php' => config_path('ixlcompression.php'),
         ], 'config');
     }
-    
-    
 }
