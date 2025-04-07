@@ -5,6 +5,7 @@ namespace Ranjeet\IxlCompression;
 use Illuminate\Http\File;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Config;
 use Exception;
 
 class FileCompressor
@@ -105,8 +106,9 @@ class FileCompressor
     private function compressWithSnappy($inputPath, $outputPath)
     {
         try {
+            $quality = config('ixlcompression.image_quality', 60);
             $snappy = new \Barryvdh\Snappy\PdfWrapper(app('snappy.pdf'));
-            $snappy->setOption('quality', 60);
+            $snappy->setOption('quality', $quality);
             $snappy->generate($inputPath, $outputPath);
             return $outputPath;
         } catch (Exception $e) {
@@ -140,9 +142,9 @@ class FileCompressor
         $escapedInput = escapeshellarg($inputPath);
         $escapedOutput = escapeshellarg($outputPath);
 
-        // 'ebook' => '-dPDFSETTINGS=/ebook', // good quality + small size
+        $gsSetting = config('ixlcompression.pdf_quality', 'screen');
 
-        $gsCommand = "gs -sDEVICE=pdfwrite -dCompatibilityLevel=1.4 -dPDFSETTINGS=/screen -dNOPAUSE -dQUIET -dBATCH -sOutputFile=$escapedOutput $escapedInput";
+        $gsCommand = "gs -sDEVICE=pdfwrite -dCompatibilityLevel=1.4 -dPDFSETTINGS=/$gsSetting -dNOPAUSE -dQUIET -dBATCH -sOutputFile=$escapedOutput $escapedInput";
         exec($gsCommand, $output, $returnVar);
 
         if ($returnVar !== 0) {
@@ -159,12 +161,13 @@ class FileCompressor
         }
 
         try {
+            $quality = config('ixlcompression.image_quality', 60);
             $imagick = new \Imagick($inputPath);
             // Set compression based on format
             if ($imagick->getImageFormat() === 'TIFF') {
                 $imagick->setImageCompression(\Imagick::COMPRESSION_LZW); // LZW compression for TIFF
             } else {
-                $imagick->setImageCompressionQuality(60); // 60% quality for all other formats
+                $imagick->setImageCompressionQuality($quality);
             }
             $imagick->stripImage(); // Remove metadata to reduce size
             $imagick->writeImage($outputPath);
