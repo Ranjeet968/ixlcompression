@@ -56,9 +56,14 @@ class FileCompressor
         $compressedFilePath = $this->handleCompression($inputPath, $outputPath, $fileExtension);
 
         // 🔹 Return as an UploadedFile instance so users can use it without modifying their code
+
+        $originalName = method_exists($file, 'getClientOriginalName')
+            ? $file->getClientOriginalName()
+            : basename($file->getPathname()); // fallback for File instances
+
         return new UploadedFile(
             $compressedFilePath,
-            $file->getClientOriginalName(),
+            $originalName,
             mime_content_type($compressedFilePath),
             null,
             true // Mark as test mode (skips some validation)
@@ -86,24 +91,27 @@ class FileCompressor
 
     private function compressPDF($inputPath, $outputPath)
     {
-        $gsCheck = shell_exec("gs --version 2>&1"); // Check if Ghostscript is available
-        if (!$gsCheck) {
-            throw new \Exception("Ghostscript is not installed. Please install it using: sudo apt install ghostscript");
+        if (!shell_exec("gs --version 2>&1")) {
+            throw new \Exception("Ghostscript is not installed.");
         }
 
-        // Try Snappy first
-        if (class_exists('\Barryvdh\Snappy\PdfWrapper')) {
-            return $this->compressWithSnappy($inputPath, $outputPath);
+        // Snappy file? Re-generate with Snappy, then compress
+        if (class_exists('\Barryvdh\Snappy\PdfWrapper') && $this->isSnappyFile($inputPath)) {
+            $tempSnappyPath = $this->regenerateWithSnappy($inputPath);
+            return $this->compressWithGhostscript($tempSnappyPath, $outputPath);
         }
 
-        // Try Dompdf next
-        if (class_exists('\Dompdf\Dompdf')) {
-            return $this->compressWithDompdf($inputPath, $outputPath);
+        // Dompdf file? Re-generate with Dompdf, then compress
+        if (class_exists('\Dompdf\Dompdf') && $this->isDompdfFile($inputPath)) {
+            $tempDompdfPath = $this->regenerateWithDompdf($inputPath);
+            return $this->compressWithGhostscript($tempDompdfPath, $outputPath);
         }
 
-        // Default fallback: Ghostscript
+        // Regular PDF? Directly compress
         return $this->compressWithGhostscript($inputPath, $outputPath);
     }
+
+
 
     private function compressWithSnappy($inputPath, $outputPath)
     {
@@ -207,5 +215,43 @@ class FileCompressor
         }
 
         return $outputPath;
+    }
+
+    private function isSnappyFile($inputPath)
+    {
+        // Basic heuristic: check for known Snappy PDF metadata
+        $content = file_get_contents($inputPath);
+        return strpos($content, '/Producer (wkhtmltopdf') !== false;
+    }
+
+    private function isDompdfFile($inputPath)
+    {
+        $content = file_get_contents($inputPath);
+        return strpos($content, '/Producer (Dompdf') !== false;
+    }
+
+    private function regenerateWithSnappy($inputPath)
+    {
+        $outputPath = sys_get_temp_dir() . '/' . uniqid('snappy_regen_') . '.pdf';
+        $snappy = new \Barryvdh\Snappy\PdfWrapper(app('snappy.pdf'));
+        $snappy->setOption('quality', config('ixlcompression.image_quality', 60));
+        $snappy->generate($inputPath, $outputPath);
+        return $outputPath;
+    }
+
+    private function regenerateWithDompdf($inputPath)
+    {
+        $outputPath = sys_get_temp_dir() . '/' . uniqid('dompdf_regen_') . '.pdf';
+        $dompdf = new \Dompdf\Dompdf();
+        $dompdf->loadHtml(file_get_contents($inputPath));
+        $dompdf->setPaper('A4', 'portrait');
+        $dompdf->render();
+        file_put_contents($outputPath, $dompdf->output());
+        return $outputPath;
+    }
+
+    private function fileMock($path)
+    {
+        return new UploadedFile($path, basename($path), mime_content_type($path), null, true);
     }
 }
